@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../app_dependencies.dart';
 import '../../../utils/animations_util.dart';
 import '../../states/ride_preference_state.dart';
-import '../../theme/theme.dart';
-import '../../view_models/home_view_model.dart';
-import '../../widgets/pickers/ride_preference/bla_ride_preference_picker.dart';
 import '../rides_selection/rides_selection_screen.dart';
-import 'widgets/home_history_tile.dart';
+import 'view_model/home_model.dart';
+import 'widgets/home_content.dart';
 
 const String blablaHomeImagePath = 'assets/images/blabla_home.png';
 
@@ -25,8 +23,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final AppDependencies _dependencies;
-  late final RidePreferenceState _ridePreferenceState;
-  late final HomeViewModel _viewModel;
+  late final HomeModel _viewModel;
   bool _dependenciesReady = false;
 
   @override
@@ -38,9 +35,21 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     _dependencies = AppDependencies.of(context);
-    _ridePreferenceState = _dependencies.ridePreferenceState;
-    _viewModel = HomeViewModel(ridePreferenceState: _ridePreferenceState);
+    final RidePreferenceState ridePreferenceState =
+        _dependencies.ridePreferenceState;
+    _viewModel = HomeModel(
+      ridePreferenceState: ridePreferenceState,
+      locationRepository: _dependencies.locationRepository,
+    );
     _dependenciesReady = true;
+  }
+
+  @override
+  void dispose() {
+    if (_dependenciesReady) {
+      _viewModel.dispose();
+    }
+    super.dispose();
   }
 
   void onRidePrefSelected(RidePreference selectedPreference) async {
@@ -57,69 +66,14 @@ class _HomeScreenState extends State<HomeScreen> {
       return const SizedBox.shrink();
     }
 
-    return AnimatedBuilder(
-      animation: _ridePreferenceState,
-      builder: (context, child) {
-        return Stack(children: [_buildBackground(), _buildForeground()]);
-      },
-    );
-  }
-
-  Widget _buildForeground() {
-    return Column(
+    return Stack(
       children: [
-        // 1 - THE HEADER
-        SizedBox(height: 16),
-        Align(
-          alignment: AlignmentGeometry.center,
-          child: Text(
-            "Your pick of rides at low price",
-            style: BlaTextStyles.heading.copyWith(color: Colors.white),
-          ),
-        ),
-        SizedBox(height: 100),
-
-        Container(
-          margin: EdgeInsets.symmetric(horizontal: BlaSpacings.xxl),
-          decoration: BoxDecoration(
-            color: Colors.white, // White background
-            borderRadius: BorderRadius.circular(16), // Rounded corners
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // 2 - THE FORM
-              BlaRidePreferencePicker(
-                initRidePreference: _viewModel.selectedPreference,
-                locationRepository: _dependencies.locationRepository,
-                maxAllowedSeats: _ridePreferenceState.maxAllowedSeats,
-                onRidePreferenceSelected: onRidePrefSelected,
-              ),
-              SizedBox(height: BlaSpacings.m),
-
-              // 3 - THE HISTORY
-              _buildHistory(),
-            ],
-          ),
+        _buildBackground(),
+        HomeContent(
+          viewModel: _viewModel,
+          onRidePreferenceSelected: onRidePrefSelected,
         ),
       ],
-    );
-  }
-
-  Widget _buildHistory() {
-    List<RidePreference> history = _viewModel.history;
-    return SizedBox(
-      height: 200, // Set a fixed height
-      child: ListView.builder(
-        shrinkWrap: true, // Fix ListView height issue
-        physics: AlwaysScrollableScrollPhysics(),
-        itemCount: history.length,
-        itemBuilder: (ctx, index) => HomeHistoryTile(
-          ridePref: history[index],
-          onPressed: () => onRidePrefSelected(history[index]),
-        ),
-      ),
     );
   }
 
