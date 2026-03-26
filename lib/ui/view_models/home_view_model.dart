@@ -1,19 +1,19 @@
 import '../../model/ride_pref/ride_pref.dart';
-import '../states/ride_preferences_state.dart';
+import '../states/ride_preference_state.dart';
 
 class HomeViewModel {
-  HomeViewModel({required RidePreferencesState ridePreferencesState})
-    : _ridePreferencesState = ridePreferencesState;
+  HomeViewModel({required RidePreferenceState ridePreferenceState})
+    : _ridePreferenceState = ridePreferenceState;
 
-  final RidePreferencesState _ridePreferencesState;
+  final RidePreferenceState _ridePreferenceState;
 
   RidePreference? get selectedPreference =>
-      _ridePreferencesState.selectedPreference;
+      _ridePreferenceState.selectedPreference;
 
   List<RidePreference> get history =>
-      _ridePreferencesState.preferenceHistory.reversed.toList();
+      _ridePreferenceState.preferenceHistory.reversed.toList();
 
   void selectPreference(RidePreference preference) {
-    _ridePreferencesState.selectPreference(preference);
+    _ridePreferenceState.selectPreference(preference);
   }
 }

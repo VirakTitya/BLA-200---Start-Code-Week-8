@@ -59,7 +59,7 @@ class _RidePreferenceModalState extends State<RidePreferenceModal> {
                 child: BlaRidePreferencePicker(
                   initRidePreference: widget.initialPreference,
                   locationRepository: dependencies.locationRepository,
-                  maxAllowedSeats: dependencies.ridePreferencesState.maxAllowedSeats,
+                  maxAllowedSeats: dependencies.ridePreferenceState.maxAllowedSeats,
                   onRidePreferenceSelected: onRidePreferenceSelected,
                 ),
               ),

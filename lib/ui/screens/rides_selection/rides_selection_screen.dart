@@ -4,7 +4,7 @@ import '../../../model/ride_pref/ride_pref.dart';
 import '../../../app_dependencies.dart';
 import '../../../utils/animations_util.dart' show AnimationUtils;
 import '../../widgets/pickers/location/bla_ride_preference_modal.dart';
-import '../../states/ride_preferences_state.dart';
+import '../../states/ride_preference_state.dart';
 import '../../theme/theme.dart';
 import '../../view_models/rides_selection_view_model.dart';
 import 'widgets/rides_selection_header.dart';
@@ -25,7 +25,7 @@ class RidesSelectionScreen extends StatefulWidget {
 
 class _RidesSelectionScreenState extends State<RidesSelectionScreen> {
   late final RidesSelectionViewModel _viewModel;
-  late final RidePreferencesState _ridePreferencesState;
+  late final RidePreferenceState _ridePreferenceState;
   bool _dependenciesReady = false;
 
   @override
@@ -37,9 +37,9 @@ class _RidesSelectionScreenState extends State<RidesSelectionScreen> {
     }
 
     final AppDependencies dependencies = AppDependencies.of(context);
-    _ridePreferencesState = dependencies.ridePreferencesState;
+    _ridePreferenceState = dependencies.ridePreferenceState;
     _viewModel = RidesSelectionViewModel(
-      ridePreferencesState: _ridePreferencesState,
+      ridePreferenceState: _ridePreferenceState,
       rideRepository: dependencies.rideRepository,
     );
     _dependenciesReady = true;
@@ -83,7 +83,7 @@ class _RidesSelectionScreenState extends State<RidesSelectionScreen> {
 
     return Scaffold(
       body: AnimatedBuilder(
-        animation: _ridePreferencesState,
+        animation: _ridePreferenceState,
         builder: (context, child) {
           return Padding(
             padding: const EdgeInsets.only(

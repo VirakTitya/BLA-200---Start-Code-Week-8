@@ -5,7 +5,7 @@ import 'data/repositories/location/location_repository.dart';
 import 'data/repositories/ride/ride_repository.dart';
 import 'data/repositories/ride_preference/ride_preference_repository.dart';
 import 'ui/screens/home/home_screen.dart';
-import 'ui/states/ride_preferences_state.dart';
+import 'ui/states/ride_preference_state.dart';
 import 'ui/theme/theme.dart';
 
 class BlaBlaApp extends StatefulWidget {
@@ -25,19 +25,19 @@ class BlaBlaApp extends StatefulWidget {
 }
 
 class _BlaBlaAppState extends State<BlaBlaApp> {
-  late final RidePreferencesState _ridePreferencesState;
+  late final RidePreferenceState _ridePreferenceState;
 
   @override
   void initState() {
     super.initState();
-    _ridePreferencesState = RidePreferencesState(
+    _ridePreferenceState = RidePreferenceState(
       repository: widget.ridePreferenceRepository,
     );
   }
 
   @override
   void dispose() {
-    _ridePreferencesState.dispose();
+    _ridePreferenceState.dispose();
     super.dispose();
   }
 
@@ -47,7 +47,7 @@ class _BlaBlaAppState extends State<BlaBlaApp> {
       locationRepository: widget.locationRepository,
       rideRepository: widget.rideRepository,
       ridePreferenceRepository: widget.ridePreferenceRepository,
-      ridePreferencesState: _ridePreferencesState,
+      ridePreferenceState: _ridePreferenceState,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: blaTheme,

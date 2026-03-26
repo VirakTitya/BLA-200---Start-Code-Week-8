@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'data/repositories/location/location_repository.dart';
 import 'data/repositories/ride/ride_repository.dart';
 import 'data/repositories/ride_preference/ride_preference_repository.dart';
-import 'ui/states/ride_preferences_state.dart';
+import 'ui/states/ride_preference_state.dart';
 
 class AppDependencies extends InheritedWidget {
   const AppDependencies({
@@ -12,13 +12,13 @@ class AppDependencies extends InheritedWidget {
     required this.locationRepository,
     required this.rideRepository,
     required this.ridePreferenceRepository,
-    required this.ridePreferencesState,
+    required this.ridePreferenceState,
   });
 
   final LocationRepository locationRepository;
   final RideRepository rideRepository;
   final RidePreferenceRepository ridePreferenceRepository;
-  final RidePreferencesState ridePreferencesState;
+  final RidePreferenceState ridePreferenceState;
 
   static AppDependencies of(BuildContext context) {
     final AppDependencies? dependencies =
@@ -32,6 +32,6 @@ class AppDependencies extends InheritedWidget {
     return locationRepository != oldWidget.locationRepository ||
         rideRepository != oldWidget.rideRepository ||
         ridePreferenceRepository != oldWidget.ridePreferenceRepository ||
-        ridePreferencesState != oldWidget.ridePreferencesState;
+        ridePreferenceState != oldWidget.ridePreferenceState;
   }
 }

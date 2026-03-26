@@ -2,7 +2,7 @@ import 'package:blabla/model/ride_pref/ride_pref.dart';
 import 'package:flutter/material.dart';
 import '../../../app_dependencies.dart';
 import '../../../utils/animations_util.dart';
-import '../../states/ride_preferences_state.dart';
+import '../../states/ride_preference_state.dart';
 import '../../theme/theme.dart';
 import '../../view_models/home_view_model.dart';
 import '../../widgets/pickers/ride_preference/bla_ride_preference_picker.dart';
@@ -25,7 +25,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final AppDependencies _dependencies;
-  late final RidePreferencesState _ridePreferencesState;
+  late final RidePreferenceState _ridePreferenceState;
   late final HomeViewModel _viewModel;
   bool _dependenciesReady = false;
 
@@ -38,8 +38,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     _dependencies = AppDependencies.of(context);
-    _ridePreferencesState = _dependencies.ridePreferencesState;
-    _viewModel = HomeViewModel(ridePreferencesState: _ridePreferencesState);
+    _ridePreferenceState = _dependencies.ridePreferenceState;
+    _viewModel = HomeViewModel(ridePreferenceState: _ridePreferenceState);
     _dependenciesReady = true;
   }
 
@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return AnimatedBuilder(
-      animation: _ridePreferencesState,
+      animation: _ridePreferenceState,
       builder: (context, child) {
         return Stack(children: [_buildBackground(), _buildForeground()]);
       },
@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
               BlaRidePreferencePicker(
                 initRidePreference: _viewModel.selectedPreference,
                 locationRepository: _dependencies.locationRepository,
-                maxAllowedSeats: _ridePreferencesState.maxAllowedSeats,
+                maxAllowedSeats: _ridePreferenceState.maxAllowedSeats,
                 onRidePreferenceSelected: onRidePrefSelected,
               ),
               SizedBox(height: BlaSpacings.m),
