@@ -1,9 +1,8 @@
 import 'package:blabla/data/repositories/location/location_repository.dart';
+import 'package:blabla/model/ride/locations.dart';
+import 'package:blabla/ui/theme/theme.dart';
 import 'package:blabla/ui/widgets/display/bla_divider.dart';
 import 'package:flutter/material.dart';
-
-import '../../../model/ride/locations.dart';
-import '../../theme/theme.dart';
 
 ///
 /// A  Location Picker is a view to pick a Location:

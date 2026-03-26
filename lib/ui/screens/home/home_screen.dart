@@ -5,7 +5,7 @@ import '../../../utils/animations_util.dart';
 import '../../states/ride_preferences_state.dart';
 import '../../theme/theme.dart';
 import '../../view_models/home_view_model.dart';
-import '../../widgets/pickers/bla_ride_preference_picker.dart';
+import '../../widgets/pickers/ride_preference/bla_ride_preference_picker.dart';
 import '../rides_selection/rides_selection_screen.dart';
 import 'widgets/home_history_tile.dart';
 
