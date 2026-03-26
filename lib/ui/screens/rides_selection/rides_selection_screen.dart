@@ -5,10 +5,8 @@ import '../../../app_dependencies.dart';
 import '../../../utils/animations_util.dart' show AnimationUtils;
 import '../../widgets/pickers/location/bla_ride_preference_modal.dart';
 import '../../states/ride_preference_state.dart';
-import '../../theme/theme.dart';
-import '../../view_models/rides_selection_view_model.dart';
-import 'widgets/rides_selection_header.dart';
-import 'widgets/rides_selection_tile.dart';
+import 'view_model/rides_selection_model.dart';
+import 'widgets/rides_selection_content.dart';
 
 ///
 ///  The Ride Selection screen allows user to select a ride, once ride preferences have been defined.
@@ -24,8 +22,7 @@ class RidesSelectionScreen extends StatefulWidget {
 }
 
 class _RidesSelectionScreenState extends State<RidesSelectionScreen> {
-  late final RidesSelectionViewModel _viewModel;
-  late final RidePreferenceState _ridePreferenceState;
+  late final RidesSelectionModel _viewModel;
   bool _dependenciesReady = false;
 
   @override
@@ -37,12 +34,21 @@ class _RidesSelectionScreenState extends State<RidesSelectionScreen> {
     }
 
     final AppDependencies dependencies = AppDependencies.of(context);
-    _ridePreferenceState = dependencies.ridePreferenceState;
-    _viewModel = RidesSelectionViewModel(
-      ridePreferenceState: _ridePreferenceState,
+    final RidePreferenceState ridePreferenceState =
+        dependencies.ridePreferenceState;
+    _viewModel = RidesSelectionModel(
+      ridePreferenceState: ridePreferenceState,
       rideRepository: dependencies.rideRepository,
     );
     _dependenciesReady = true;
+  }
+
+  @override
+  void dispose() {
+    if (_dependenciesReady) {
+      _viewModel.dispose();
+    }
+    super.dispose();
   }
 
   void onBackTap() {
@@ -57,16 +63,13 @@ class _RidesSelectionScreenState extends State<RidesSelectionScreen> {
     // Later
   }
 
-  RidePreference get selectedRidePreference =>
-      _viewModel.selectedRidePreference;
-
-  List<Ride> get matchingRides => _viewModel.matchingRides;
-
   void onPreferencePressed() async {
     RidePreference? newPreference = await Navigator.of(context)
         .push<RidePreference>(
           AnimationUtils.createRightToLeftRoute(
-            RidePreferenceModal(initialPreference: selectedRidePreference),
+            RidePreferenceModal(
+              initialPreference: _viewModel.selectedRidePreference,
+            ),
           ),
         );
 
@@ -82,37 +85,12 @@ class _RidesSelectionScreenState extends State<RidesSelectionScreen> {
     }
 
     return Scaffold(
-      body: AnimatedBuilder(
-        animation: _ridePreferenceState,
-        builder: (context, child) {
-          return Padding(
-            padding: const EdgeInsets.only(
-              left: BlaSpacings.m,
-              right: BlaSpacings.m,
-              top: BlaSpacings.s,
-            ),
-            child: Column(
-              children: [
-                RideSelectionHeader(
-                  ridePreference: selectedRidePreference,
-                  onBackPressed: onBackTap,
-                  onFilterPressed: onFilterPressed,
-                  onPreferencePressed: onPreferencePressed,
-                ),
-                SizedBox(height: 100),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: matchingRides.length,
-                    itemBuilder: (ctx, index) => RideSelectionTile(
-                      ride: matchingRides[index],
-                      onPressed: () => onRideSelected(matchingRides[index]),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+      body: RidesSelectionContent(
+        viewModel: _viewModel,
+        onBackPressed: onBackTap,
+        onFilterPressed: onFilterPressed,
+        onPreferencePressed: onPreferencePressed,
+        onRideSelected: onRideSelected,
       ),
     );
   }
