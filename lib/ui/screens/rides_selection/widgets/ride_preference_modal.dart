@@ -1,6 +1,7 @@
 import 'package:blabla/ui/widgets/pickers/bla_ride_preference_picker.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../app_dependencies.dart';
 import '../../../../model/ride_pref/ride_pref.dart';
 import '../../../theme/theme.dart';
 import '../../../widgets/buttons/bla_icon_button.dart';
@@ -29,6 +30,8 @@ class _RidePreferenceModalState extends State<RidePreferenceModal> {
 
   @override
   Widget build(BuildContext context) {
+    final AppDependencies dependencies = AppDependencies.of(context);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.only(
@@ -55,6 +58,8 @@ class _RidePreferenceModalState extends State<RidePreferenceModal> {
                 padding: const EdgeInsets.all(10),
                 child: BlaRidePreferencePicker(
                   initRidePreference: widget.initialPreference,
+                  locationRepository: dependencies.locationRepository,
+                  maxAllowedSeats: dependencies.ridePreferencesState.maxAllowedSeats,
                   onRidePreferenceSelected: onRidePreferenceSelected,
                 ),
               ),

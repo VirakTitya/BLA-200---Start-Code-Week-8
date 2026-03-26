@@ -1,8 +1,10 @@
 import 'package:blabla/model/ride_pref/ride_pref.dart';
-import 'package:blabla/services/ride_prefs_service.dart';
 import 'package:flutter/material.dart';
+import '../../../app_dependencies.dart';
 import '../../../utils/animations_util.dart';
+import '../../states/ride_preferences_state.dart';
 import '../../theme/theme.dart';
+import '../../view_models/home_view_model.dart';
 import '../../widgets/pickers/bla_ride_preference_picker.dart';
 import '../rides_selection/rides_selection_screen.dart';
 import 'widgets/home_history_tile.dart';
@@ -22,22 +24,45 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  void onRidePrefSelected(RidePreference selectedPreference) async {
-    // 1- Ask the service to update the current preference
-    RidePrefsService.selectPreference(selectedPreference);
+  late final AppDependencies _dependencies;
+  late final RidePreferencesState _ridePreferencesState;
+  late final HomeViewModel _viewModel;
+  bool _dependenciesReady = false;
 
-    // 2 - Navigate to the rides screen
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_dependenciesReady) {
+      return;
+    }
+
+    _dependencies = AppDependencies.of(context);
+    _ridePreferencesState = _dependencies.ridePreferencesState;
+    _viewModel = HomeViewModel(ridePreferencesState: _ridePreferencesState);
+    _dependenciesReady = true;
+  }
+
+  void onRidePrefSelected(RidePreference selectedPreference) async {
+    _viewModel.selectPreference(selectedPreference);
+
     await Navigator.of(
       context,
-    ).push(AnimationUtils.createBottomToTopRoute(RidesSelectionScreen()));
-
-    // 3 - After wait  - Update the state   - TODO Improve this with proper state managagement
-    setState(() {});
+    ).push(AnimationUtils.createBottomToTopRoute(const RidesSelectionScreen()));
   }
 
   @override
   Widget build(context) {
-    return Stack(children: [_buildBackground(), _buildForeground()]);
+    if (!_dependenciesReady) {
+      return const SizedBox.shrink();
+    }
+
+    return AnimatedBuilder(
+      animation: _ridePreferencesState,
+      builder: (context, child) {
+        return Stack(children: [_buildBackground(), _buildForeground()]);
+      },
+    );
   }
 
   Widget _buildForeground() {
@@ -66,7 +91,9 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               // 2 - THE FORM
               BlaRidePreferencePicker(
-                initRidePreference: RidePrefsService.selectedPreference,
+                initRidePreference: _viewModel.selectedPreference,
+                locationRepository: _dependencies.locationRepository,
+                maxAllowedSeats: _ridePreferencesState.maxAllowedSeats,
                 onRidePreferenceSelected: onRidePrefSelected,
               ),
               SizedBox(height: BlaSpacings.m),
@@ -81,9 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHistory() {
-    // Reverse the history of preferences
-    List<RidePreference> history = RidePrefsService.preferenceHistory.reversed
-        .toList();
+    List<RidePreference> history = _viewModel.history;
     return SizedBox(
       height: 200, // Set a fixed height
       child: ListView.builder(

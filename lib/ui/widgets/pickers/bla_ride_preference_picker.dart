@@ -1,10 +1,10 @@
+import 'package:blabla/data/repositories/location/location_repository.dart';
 import 'package:blabla/ui/widgets/buttons/bla_button.dart';
 import 'package:blabla/ui/widgets/display/bla_divider.dart';
 import 'package:flutter/material.dart';
 
 import '../../../model/ride/locations.dart';
 import '../../../model/ride_pref/ride_pref.dart';
-import '../../../services/ride_prefs_service.dart';
 import '../../../utils/animations_util.dart';
 import '../../../utils/date_time_utils.dart';
 import '../../theme/theme.dart';
@@ -25,10 +25,14 @@ class BlaRidePreferencePicker extends StatefulWidget {
   const BlaRidePreferencePicker({
     super.key,
     this.initRidePreference,
+    required this.locationRepository,
+    required this.maxAllowedSeats,
     required this.onRidePreferenceSelected,
   });
 
   final ValueChanged<RidePreference> onRidePreferenceSelected;
+  final LocationRepository locationRepository;
+  final int maxAllowedSeats;
 
   @override
   State<BlaRidePreferencePicker> createState() =>
@@ -80,7 +84,7 @@ class _BlaRidePreferencePickerState extends State<BlaRidePreferencePicker> {
     // 1- Select a location
     Location? selectedLocation = await Navigator.of(context).push<Location>(
       AnimationUtils.createBottomToTopRoute(
-        BlaLocationPicker(initLocation: departure),
+        BlaLocationPicker(initLocation: departure, locationRepository: widget.locationRepository),
       ),
     );
 
@@ -96,7 +100,7 @@ class _BlaRidePreferencePickerState extends State<BlaRidePreferencePicker> {
     // 1- Select a arrival
     Location? selectedLocation = await Navigator.of(context).push<Location>(
       AnimationUtils.createBottomToTopRoute(
-        BlaLocationPicker(initLocation: arrival),
+        BlaLocationPicker(initLocation: arrival, locationRepository: widget.locationRepository),
       ),
     );
 
@@ -114,7 +118,7 @@ class _BlaRidePreferencePickerState extends State<BlaRidePreferencePicker> {
       AnimationUtils.createRightToLeftRoute(
         BlaSeatPicker(
           initSeats: requestedSeats,
-          maxSeat: RidePrefsService.maxAllowedSeats,
+          maxSeat: widget.maxAllowedSeats,
         ),
       ),
     );
